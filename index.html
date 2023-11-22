@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Mirror Transformation</title>
+</head>
+<body>
+    <h1>Upload Image for Mirror Transformation</h1>
+
+    <!-- Form for Uploading Image -->
+    <form id="uploadForm">
+        <input type="file" id="imageUpload" name="image" accept="image/*"><br><br>
+        <input type="text" id="imageUrl" placeholder="Or enter Image URL"><br><br>
+        <button type="button" onclick="uploadImage()">Submit</button>
+    </form>
+
+    <h2>Transformed Image</h2>
+    <img id="transformedImage" src="" alt="Transformed Image will appear here" hidden>
+
+    <script>
+        function uploadImage() {
+            var formData = new FormData();
+            var imageInput = document.getElementById('imageUpload');
+            var imageUrl = document.getElementById('imageUrl').value;
+            
+            if (imageInput.files.length > 0) {
+                // File upload
+                formData.append('file', imageInput.files[0]);
+            } else if (imageUrl) {
+                // URL upload
+                formData.append('imageUrl', imageUrl);
+            } else {
+                alert("Please select a file or enter an image URL.");
+                return;
+            }
+
+            fetch('YOUR_COLAB_FLASK_APP_URL/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.blob())
+            .then(imageBlob => {
+                const imageUrl = URL.createObjectURL(imageBlob);
+                document.getElementById('transformedImage').src = imageUrl;
+                document.getElementById('transformedImage').hidden = false;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
